@@ -18,4 +18,15 @@ class Solution:
             if complement in hashmap:
                 return[hashmap[complement], i]
             else:
-                hashmap[nums[i]] = i #assigning to the dict
+                hashmap[nums[i]] = i #assigning to the dict and iterate from the second indices
+#two way hash table
+class Solution:
+    def twoSum(self, nums, target: int):
+        hashmap = {}
+        for i in range(len(nums)):
+            hashmap[nums[i]] = i #assign i into dictionary
+        for i in range(len(nums)):
+            complement = target - nums[i]
+            if complement in hashmap and hashmap[complement] != i: #check if complement inside the dictionary if not and not equal to i then output its indices
+                return [i, hashmap[complement]]
+##################################################################################################################################################################
