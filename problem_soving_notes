@@ -35,8 +35,9 @@ class Solution:
 #A zero-based permutation nums is an array of distinct integers from 0 to nums.length - 1 (inclusive).
 class Solution:
     def buildArray(self, nums: List[int]) -> List[int]:
-        n = len(nums)
-        ans = [0 for i in range(n)]
-        for i in range(n):
+        ans = [0 for i in range(len(nums))] #zero
+        for i in range(len(nums)):
             ans[i] = nums[nums[i]]
         return ans
+####################################################################################################################################################################
+#167. Two Sum II - Input Array Is Sorted
