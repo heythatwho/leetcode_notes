@@ -41,3 +41,15 @@ class Solution:
         return ans
 ####################################################################################################################################################################
 #167. Two Sum II - Input Array Is Sorted
+#array #two points
+class Solution:
+    def twoSum(self, numbers: List[int], target: int) -> List[int]:
+        left, right = 0, len(numbers)-1 #cant do 1-indexed here, will not have the right end number
+        while right > left:
+            twosum =  numbers[left] + numbers[right] #3 situations, = < > target, needs process for each
+            if twosum > target:
+                right -= 1
+            elif twosum < target:
+                left += 1
+            elif twosum == target:
+                return[left + 1, right + 1] #adding 1 to shift one to the right
