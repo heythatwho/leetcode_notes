@@ -43,6 +43,8 @@ class Solution: #map the index to number and index to index
 ####################################################################################################################################################################
 #167. Two Sum II - Input Array Is Sorted
 #array #two points
+#Given a 1-indexed array of integers numbers that is already sorted in non-decreasing order, find two numbers such that they add up to a specific target number. Let these two numbers be numbers[index1] and numbers[index2] where 1 <= index1 < index2 <= numbers.length.
+#Return the indices of the two numbers, index1 and index2, added by one as an integer array [index1, index2] of length 2. The tests are generated such that there is exactly one solution. You may not use the same element twice.
 class Solution:
     def twoSum(self, numbers: List[int], target: int) -> List[int]:
         left, right = 0, len(numbers)-1 #cant do 1-indexed here, will not have the right end number
@@ -55,4 +57,35 @@ class Solution:
             elif twosum == target:
                 return[left + 1, right + 1] #adding 1 to shift one to the right
 ####################################################################################################################################################################
-170. Two Sum III - Data structure design
+#170. Two Sum III - Data structure design
+#Design a data structure that accepts a stream of integers and checks if it has a pair of integers that sum up to a particular value.
+#Implement the TwoSum class:
+#TwoSum() Initializes the TwoSum object, with an empty array initially.
+#void add(int number) Adds number to the data structure.
+#boolean find(int value) Returns true if there exists any pair of numbers whose sum is equal to value, otherwise, it returns false.
+
+#thoughts: array a=[], a.append(), find() , when adding numbers need to sort, hashmap(reference from orginal #1 twosum, {}number count, value-number in map?-->conditions)
+class TwoSum: #hashmap
+
+    def __init__(self):
+        self.count = dict() #use dictionary to store number:count
+
+    def add(self, number: int) -> None: #scan and add
+        if number in self.count:
+            self.count[number] += 1
+        else: #not number in self.count
+            self.count[number] = 1
+
+    def find(self, value: int) -> bool:
+        for num in self.count:
+            complement = value - num
+            if complement in self.count and (complement != num or self.count[num] > 1):
+                return True
+
+        return False
+
+
+# Your TwoSum object will be instantiated and called as such:
+# obj = TwoSum()
+# obj.add(number)
+# param_2 = obj.find(value)
