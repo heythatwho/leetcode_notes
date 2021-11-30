@@ -81,7 +81,19 @@ group by 2) min_id) #using subquery to find the email with smallest Ids, for wha
 
 
 #197. Rising Temperature
+#Write an SQL query to find all dates' Id with higher temperatures compared to its previous dates (yesterday).
 select td.id
 from weather td, weather pd
 where datediff(td.recordDate, pd.recordDate) =1 #date calculations are the key
     and td.temperature > pd.temperature
+
+
+#577. Employee Bonus
+#Write an SQL query to report the name and bonus amount of each employee with a bonus less than 1000.
+select 
+name,
+coalesce(bonus, null) as bonus
+from employee emp
+left join bonus bn #takes each person from the main table
+on emp.empID = bn.empID
+    where bonus < 1000 or bonus is null; #the tricky part is bonus is null
