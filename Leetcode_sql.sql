@@ -97,3 +97,55 @@ from employee emp
 left join bonus bn #takes each person from the main table
 on emp.empID = bn.empID
     where bonus < 1000 or bonus is null; #the tricky part is bonus is null
+
+#1082. Sales Analysis I
+#Write an SQL query that reports the best seller by total sales price, If there is a tie, report them all.
+with total_sales as
+(select seller_id,
+sum(price) as sales_price
+from sales
+group by 1) #calculate the sum of sale and then filter to max total
+
+select seller_id
+from total_sales
+where sales_price in (select max(sales_price) from total_sales)
+##############################################alternative
+SELECT seller_id
+FROM (
+    SELECT seller_id, RANK() OVER(ORDER BY SUM(price) DESC) AS rnk
+    FROM Sales
+    GROUP BY seller_id
+) a
+WHERE rnk = 1;
+
+#584. Find Customer Referee
+# Write an SQL query to report the IDs of the customer that are not referred by the customer with id = 2.
+select
+name
+from customer
+where referee_id != 2 or referee_id is null; #null is easy to be ignored
+
+
+#586. Customer Placing the Largest Number of Orders
+# Write an SQL query to find the customer_number for the customer who has placed the largest number of orders.
+#The test cases are generated so that exactly one customer will have placed more orders than any other customer.
+with total as
+(select 
+customer_number,
+count(order_number) as nums
+from orders
+group by 1)
+
+select customer_number
+from total
+where nums in (select max(nums) from total);
+
+###############################################alternative
+SELECT
+    customer_number
+FROM
+    orders
+GROUP BY customer_number
+ORDER BY COUNT(*) DESC
+LIMIT 1
+;
