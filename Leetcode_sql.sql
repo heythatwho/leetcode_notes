@@ -49,3 +49,39 @@ select
 employee_id, department_id
 from employee
 where primary_flag='Y'
+
+#1280. Students and Examinations
+select
+st.student_id,
+st.student_name,
+sj.subject_name,
+coalesce(count(xm.subject_name), 0) as attended_exams
+from students st
+cross join subjects sj #cross join is the key to generate a paired combination of each row of the first table with each row of the second table.
+left join examinations xm
+on st.student_id = xm.student_id and sj.subject_name=xm.subject_name
+group by 1,2,3
+order by 1,3;
+
+#183. Customers Who Never Order
+# Write your MySQL query statement below
+select 
+    c.name as Customers
+from customers c
+where c.id not in (select customerid from orders);
+
+
+#196. Delete Duplicate Emails
+#fing the id with duplicate email
+delete from person where id not in
+(select id from (select min(p1.id) id, p1.email
+from person p1, person p2 
+where p1.email = p2.email 
+group by 2) min_id) #using subquery to find the email with smallest Ids, for whatever id not in the list should be deleted
+
+
+#197. Rising Temperature
+select td.id
+from weather td, weather pd
+where datediff(td.recordDate, pd.recordDate) =1 #date calculations are the key
+    and td.temperature > pd.temperature
