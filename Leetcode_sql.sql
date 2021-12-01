@@ -149,3 +149,46 @@ GROUP BY customer_number
 ORDER BY COUNT(*) DESC
 LIMIT 1
 ;
+
+
+#595. Big Countries
+#straight forward apply filters
+select
+name,
+population,
+area
+from world
+where area >= 3000000
+    or population >= 25000000；
+
+#596. Classes More Than 5 Students
+# Write your MySQL query statement below
+select class
+from courses
+group by 1 #i still forgot this line until error comes up
+having count(student) >=5;
+
+#597. Friend Requests I: Overall Acceptance Rate
+# Write your MySQL query statement below
+select 
+round(#if null is a key, count distinct pairs is another key
+    ifnull(count(distinct requester_id, accepter_id)/
+      count(distinct sender_id, send_to_id), 0), 2
+          ) as accept_rate
+from requestaccepted, 
+friendrequest;
+
+#1303. Find the Team Size
+#i try not to use join
+with team_size as
+(select
+team_id,
+count(employee_id) team_size
+from employee
+group by 1)
+
+select
+employee_id,
+team_size
+from employee emp, team_size ts
+where emp.team_id = ts.team_id
