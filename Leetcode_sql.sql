@@ -207,3 +207,13 @@ group by 1
 having sum(product_name = 'S8')>0 and sum(product_name = "iPhone") = 0
 order by 1 #very smart way in the having clause to filter out iphone and only retain the s8
 
+#Consecutive Available Seats
+# Write your MySQL query statement below
+select distinct #distinct to avoid duplicate
+c1.seat_id
+
+from cinema c1 
+ join cinema c2
+on abs(c1.seat_id - c2.seat_id) = 1 #abs is the tricky part
+where c1.free = 1 and c2.free = 1
+order by 1;
