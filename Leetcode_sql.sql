@@ -192,3 +192,18 @@ employee_id,
 team_size
 from employee emp, team_size ts
 where emp.team_id = ts.team_id
+
+
+#1083. Sales Analysis II
+#Write an SQL query that reports the buyers who have bought S8 but not iPhone. Note that S8 and iPhone are products present in the Product table.
+#the traditional logic is to get the buyerid from who bought s8 and then take the buyer_id from who did not buy iphone and then take the overlap
+#the below solution is an alternative way
+select
+buyer_id
+from sales s, product p
+where s.product_id = p.product_id 
+#    and s.product_id != 2 and s.product_id !=3
+group by 1 
+having sum(product_name = 'S8')>0 and sum(product_name = "iPhone") = 0
+order by 1 #very smart way in the having clause to filter out iphone and only retain the s8
+
