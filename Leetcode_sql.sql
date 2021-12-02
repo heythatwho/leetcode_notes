@@ -346,5 +346,20 @@ from (select
         group by 1,2) sub
 where row_no between cnt/2 and cnt/2+1
 
-#
-
+#180. Consecutive Numbers
+#Write an SQL query to find all numbers that appear at least three times consecutively.
+# Write your MySQL query statement below
+select distinct
+l1.num as ConsecutiveNums
+from logs l1, logs l2, logs l3
+where #same num  consecutively show 3 times
+        l1.id = l2.id - 1 
+    and l2.id = l3.id - 1
+    and l1.num = l2.num #easy forget
+    and l2.num = l3.num
+###########alternative with window function
+SELECT DISTINCT num AS ConsecutiveNums
+FROM (SELECT num, (ROW_NUMBER() OVER (ORDER BY id) - ROW_NUMBER() OVER (PARTITION BY num ORDER BY id)) cons
+    FROM Logs) tmp
+GROUP BY cons, num
+HAVING COUNT(*) >= 3
