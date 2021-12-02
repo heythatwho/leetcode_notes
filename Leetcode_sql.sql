@@ -301,5 +301,16 @@ from (select
 where row_no_desc = 2 #second most recent
     or (row_no_desc =1 and row_no_desc = row_no_asc); #deal with thoes only have one activity
 
+#580. Count Student Number in Departments
+#Write an SQL query to report the respective department name and number of students majoring in each department for all departments in the Department table (even ones with no current students).
+select
+dept_name as dept_name,
+ifnull(count(student_id), 0) as student_number
+from department d
+left join student s
+    on s.dept_id = d.dept_id
+group by 1
+order by 2 desc, 1;
+
 
 
