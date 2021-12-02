@@ -217,3 +217,89 @@ from cinema c1
 on abs(c1.seat_id - c2.seat_id) = 1 #abs is the tricky part
 where c1.free = 1 and c2.free = 1
 order by 1;
+
+#607. Sales Person
+#Write an SQL query to report the names of all the salespersons who did not have any orders related to the company with the name "RED".
+#find the list of that only contains salesperons in company red, and then use it as filter to find salesperson not in that list.
+select 
+s.name
+from salesperson s
+where s.sales_id not in (
+                        select sales_id 
+                        from orders a
+                        left join company b
+                        on a.com_id =b.com_id
+                        where b.name='RED' )
+
+#1069. Product Sales Analysis II
+# Write an SQL query that reports the total quantity sold for every product id. 
+#simple by most widely used
+select
+p.product_id,
+sum(s.quantity) as total_quantity
+from product p, sales s
+where p.product_id = s.Product_id
+group by 1;
+
+
+#1068. Product Sales Analysis I
+# Write your MySQL query statement below
+#Write an SQL query that reports the product_name, year, and price for each sale_id in the Sales table.
+with sub as(
+select
+s.sale_id,
+p.product_name, 
+s.year, 
+s.price 
+from product p, sales s
+where p.product_id = s.product_id
+group by 1)
+
+select 
+product_name, 
+year, 
+price 
+from sub
+#########use inner join is faster
+SELECT
+    t1.product_name,
+    t2.year,
+    t2.price
+FROM
+    product t1
+INNER JOIN
+    sales t2
+ON
+    t1.product_id = t2.product_id;
+
+
+#1369. Get the Second Most Recent Activity
+#Write an SQL query to show the second most recent activity of each user.
+select username, activity, startDate, endDate
+from
+(select *,
+ rank() over(partition by username order by startDate desc) as activity_order,
+ rank() over(partition by username order by startDate asc) as activity_order_rev
+ from UserActivity) tab
+ where activity_order = 2 or (activity_order = 1 and activity_order = activity_order_rev);
+##############same method
+select
+username,
+activity,
+startdate,
+enddate
+from (select
+        username,
+        activity,
+        startdate,
+        enddate,#doesnt matter using row_number or rank
+        row_number()over(partition by username order by startdate desc, enddate desc) as row_no_desc,
+        row_number()over(partition by username order by startdate, enddate ) as row_no_asc
+        #reverse rank to find the 2nd most recent, rank to check those only have one activity record
+        from useractivity
+        ) row_no
+where row_no_desc = 2 #second most recent
+    or (row_no_desc =1 and row_no_desc = row_no_asc); #deal with thoes only have one activity
+
+
+
