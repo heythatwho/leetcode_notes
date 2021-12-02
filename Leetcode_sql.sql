@@ -313,4 +313,38 @@ group by 1
 order by 2 desc, 1;
 
 
+#569. Median Employee Salary
+#using indexing 
+
+with median_id as (
+    select *, 
+    row_number() over(partition by company order by salary) as r_num, c
+    ount(company) over(partition by company) as c_cnt
+    from employee
+)
+
+select id, company, salary
+from median_id
+where r_num  between c_cnt/2.0 and c_cnt/2.0 + 1
+
+
+
+#569. Median Employee Salary
+#Write an SQL query to find the median salary of each company.
+# Write your MySQL query statement below
+select
+id,
+company,
+salary
+from (select
+        id,
+        company,
+        salary,
+        row_number()over(partition by company order by salary) as row_no, #order by here to sort the salary so that we can take the median later on
+        count(id)over(partition by company) as cnt #it is for later calculation
+        from employee
+        group by 1,2) sub
+where row_no between cnt/2 and cnt/2+1
+
+#
 
