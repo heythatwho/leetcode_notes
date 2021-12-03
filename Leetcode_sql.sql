@@ -381,5 +381,8 @@ select
 score,
 dense_rank()over(order by score desc) as 'rank'
 from scores
-
+#no group by
 order by 1 desc;
+
+
+
