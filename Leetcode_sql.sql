@@ -385,4 +385,23 @@ from scores
 order by 1 desc;
 
 
+#185. Department Top Three Salaries
+#Write an SQL query to find the employees who are high earners in each of the departments.
+# top 3 high salary and may be duplicate salary
+with tem as(
+select
+d.name as department,
+e.name as employee,
+salary,
+dense_rank()over(partition by d.id order by salary desc) as rnk
+from department d, employee e
+where d.id = e.departmentid
 
+) 
+select 
+Department,
+Employee,
+Salary
+from tem
+where rnk <=3
+order by 1, 3 desc
