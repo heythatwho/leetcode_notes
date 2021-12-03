@@ -507,3 +507,25 @@ name
 from employee
 where id in (
 select managerid from temp)
+################
+select
+name 
+from employee
+where id in (
+select managerid
+    from employee
+    group by 1 
+    having count(id) >= 5)
+
+
+
+#1777. Product's Price for Each Store
+select
+product_id,
+min(case when store = 'store1' then price end) as 'store1',
+min(case when store = 'store2' then price end) as 'store2',
+min(case when store = 'store3' then price end) as 'store3'
+from Products
+group by 1 #After group by the product_id, you need to use aggregate function to obtain the price for each store.
+#You can use max(), min(), sum() or avg(), but not count().
+#Otherwise, it will just return the first row of the group by result, e.g. [0, 95, NULL, NULL]
