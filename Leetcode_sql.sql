@@ -373,3 +373,13 @@ ifnull(
         group by salary #it focused on salary, doesnt care id
         order by salary desc
         limit 1 offset 1), null)  SecondHighestSalary #limit offset to shift to second
+
+
+#178. Rank Scores
+#test about dense_rank()
+select
+score,
+dense_rank()over(order by score desc) as 'rank'
+from scores
+
+order by 1 desc;
