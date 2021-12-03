@@ -363,3 +363,13 @@ FROM (SELECT num, (ROW_NUMBER() OVER (ORDER BY id) - ROW_NUMBER() OVER (PARTITIO
     FROM Logs) tmp
 GROUP BY cons, num
 HAVING COUNT(*) >= 3
+
+
+#176. Second Highest Salary
+select 
+ifnull(
+    (select salary
+        from employee
+        group by salary #it focused on salary, doesnt care id
+        order by salary desc
+        limit 1 offset 1), null)  SecondHighestSalary #limit offset to shift to second
