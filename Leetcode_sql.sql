@@ -546,3 +546,30 @@ group by 1,2
 order by 3 desc) sub
 limit 1;
 
+
+#585. Investments in 2016
+#Write an SQL query to report the sum of all total investment values in 2016 tiv_2016, for all policyholders who:
+#have the same tiv_2015 value as one or more other policyholders, and
+#are not located in the same city like any other policyholder (i.e., the (lat, lon) attribute pairs must be unique).
+#Round tiv_2016 to two decimal places.
+select
+    round(sum(i1.tiv_2016), 2) as tiv_2016
+from insurance i1
+where i1.tiv_2015 in (
+                    select tiv_2015 
+                    from insurance 
+                    group by 1 having count(*)>1
+                    )
+    and concat(i1.lat, i1.lon) not in (      #Concat the LAT and LON as a whole to represent the location information.
+
+                                select concat(lat, lon )
+                                from insurance 
+                                group by 1 
+                                having count(*)>1
+                                    );
+#################alternative with window functions
+select round(sum(tiv_2016),2) as tiv_2016
+from(select tiv_2016, count() over (partition by lat, lon) as location_counts, count() over(partition by tiv_2015) as 2015counts
+from Insurance
+)a
+where 2015counts>1 and location_counts<2
