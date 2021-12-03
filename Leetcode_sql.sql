@@ -441,3 +441,29 @@ WHERE
         GROUP BY DepartmentId
     )
 ;
+
+
+#177. Nth Highest Salary
+#the N highest salary
+#same logic by using dense_rank
+#but need to limit to one row in case duplicated salary amounts
+CREATE FUNCTION getNthHighestSalary(N INT) RETURNS INT
+BEGIN
+  RETURN (
+      # Write your MySQL query statement below.
+      select
+      salary 
+      from
+      (select
+      *,
+      dense_rank()over(order by salary desc) as rnk
+      from employee
+      order by salary desc) tem
+      where rnk = N 
+      limit 1
+  );
+END
+
+
+
+#
