@@ -405,3 +405,39 @@ Salary
 from tem
 where rnk <=3
 order by 1, 3 desc
+
+#184. Department Highest Salary
+#highest salaries in each department
+with tem as
+(
+select
+em.*,
+dp.name as Department,
+dense_rank()over(partition by dp.name order by salary desc) as rnk
+from employee em, department dp
+where em.departmentid = dp.id
+)
+select 
+Department,
+name as Employee,
+salary
+from tem
+##########################alternative way without window functions
+SELECT
+    Department.name AS 'Department',
+    Employee.name AS 'Employee',
+    Salary
+FROM
+    Employee
+        JOIN
+    Department ON Employee.DepartmentId = Department.Id
+WHERE
+    (Employee.DepartmentId , Salary) IN
+    (   SELECT
+            DepartmentId, MAX(Salary)
+        FROM
+            Employee
+        GROUP BY DepartmentId
+    )
+;
+where rnk = 1
