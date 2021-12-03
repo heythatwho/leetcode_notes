@@ -491,3 +491,19 @@ FROM SurveyLog
 GROUP BY question_id
 ORDER BY SUM(action = 'answer') / SUM(action = 'show') DESC, question_id ASC
 LIMIT 1
+
+#570. Managers with at Least 5 Direct Reports
+#Write an SQL query to report the managers with at least five direct reports.
+with temp as
+(
+select managerid, #find the managerid with at least 5 direct reports
+    count(id) as cnt
+    from employee
+    group by 1 
+    having count(id) >= 5
+)
+select #find the name that match the managerid
+name 
+from employee
+where id in (
+select managerid from temp)
