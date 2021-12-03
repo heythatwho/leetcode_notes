@@ -529,3 +529,20 @@ from Products
 group by 1 #After group by the product_id, you need to use aggregate function to obtain the price for each store.
 #You can use max(), min(), sum() or avg(), but not count().
 #Otherwise, it will just return the first row of the group by result, e.g. [0, 95, NULL, NULL]
+
+
+#574. Winning Candidate
+#Write an SQL query to report the name of the winning candidate (i.e., the candidate who got the largest number of votes).
+select
+name 
+from
+(select 
+c.id,
+c.name,
+count(v.id) as cnt_vote
+from candidate c, vote v
+where c.id = v.candidateID
+group by 1,2
+order by 3 desc) sub
+limit 1;
+
