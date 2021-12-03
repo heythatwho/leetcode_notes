@@ -466,4 +466,28 @@ END
 
 
 
-#
+#578. Get Highest Answer Rate Question
+with tem as (select
+question_id,
+count(answer_id) as answer_times,
+sum(case when action="answer" then 1 else 0 end)
+             /(sum(case when action="show" then 1 else 0 end)) as answer_rate,
+dense_rank()over (partition by question_id order by count(answer_id) desc) as rnk
+from SurveyLog
+group by 1
+)
+
+select
+question_id as survey_log
+from 
+tem
+where answer_rate = (select Max(answer_rate) from tem) 
+order by 1
+limit 1;
+###################alternative,,,,simple and easy
+SELECT
+    question_id survey_log
+FROM SurveyLog
+GROUP BY question_id
+ORDER BY SUM(action = 'answer') / SUM(action = 'show') DESC, question_id ASC
+LIMIT 1
