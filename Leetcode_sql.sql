@@ -422,6 +422,7 @@ Department,
 name as Employee,
 salary
 from tem
+where rnk = 1;
 ##########################alternative way without window functions
 SELECT
     Department.name AS 'Department',
@@ -430,14 +431,13 @@ SELECT
 FROM
     Employee
         JOIN
-    Department ON Employee.DepartmentId = Department.Id
+    Department ON Employee.DepartmentId = Department.Id #join the table to get the department name
 WHERE
-    (Employee.DepartmentId , Salary) IN
+    (Employee.DepartmentId , Salary) IN  #find the two values from the subquery
     (   SELECT
-            DepartmentId, MAX(Salary)
+            DepartmentId, MAX(Salary)#build a subquery in aggregation that contains the highest earns of each department
         FROM
             Employee
         GROUP BY DepartmentId
     )
 ;
-where rnk = 1
