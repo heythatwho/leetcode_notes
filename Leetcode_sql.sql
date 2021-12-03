@@ -573,3 +573,23 @@ from(select tiv_2016, count() over (partition by lat, lon) as location_counts, c
 from Insurance
 )a
 where 2015counts>1 and location_counts<2
+
+
+#602. Friend Requests II: Who Has the Most Friends
+WITH data AS
+(
+SELECT requester_id AS id
+FROM RequestAccepted
+
+UNION ALL
+
+SELECT accepter_id AS id
+FROM RequestAccepted
+
+)#combine the acceptid and requesterid together and then do the aggregation
+
+SELECT id, COUNT(*) AS num
+FROM data
+GROUP BY 1
+ORDER BY 2 DESC
+LIMIT 1
