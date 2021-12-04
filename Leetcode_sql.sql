@@ -593,3 +593,51 @@ FROM data
 GROUP BY 1
 ORDER BY 2 DESC
 LIMIT 1
+
+
+#612. Shortest Distance in a Plane
+#The distance between two points p1(x1, y1) and p2(x2, y2) is sqrt((x2 - x1)2 + (y2 - y1)2).
+#Write an SQL query to report the shortest distance between any two points from the Point2D table. Round the distance to two decimal points.
+Input: 
+Point2D table:
++----+----+
+| x  | y  |
++----+----+
+| -1 | -1 |
+| 0  | 0  |
+| -1 | -2 |
++----+----+
+
+SELECT
+    ROUND(SQRT(MIN((POW(p1.x - p2.x, 2) + POW(p1.y - p2.y, 2)))),2) AS shortest
+FROM
+    point2d p1 #self join
+        JOIN
+    point2d p2 ON (p1.x <= p2.x AND p1.y < p2.y)
+        OR (p1.x <= p2.x AND p1.y > p2.y)
+        OR (p1.x < p2.x AND p1.y = p2.y)
+;
+
+#511. Game Play Analysis I
+#Write an SQL query to report the first login date for each player.
+select
+player_id,
+min(event_date) as first_login
+from activity
+group by 1
+
+
+
+
+    
+    
+ #512. Game Play Analysis II
+ #Write an SQL query to report the device that is first logged in for each player.
+ #will need to re-do   
+select a.player_id, a.device_id
+from (
+    select player_id, 
+            device_id, 
+            rank() over(partition by player_id order by event_date asc) as date_rank
+    from Activity) as a
+    where a.date_rank = 1 
