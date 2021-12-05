@@ -641,3 +641,15 @@ from (
             rank() over(partition by player_id order by event_date asc) as date_rank
     from Activity) as a
     where a.date_rank = 1 
+
+
+#534. Game Play Analysis III
+#Write an SQL query to report for each player and date, how many games played so far by the player. That is, the total number of games played by the player until that date. Check the example for clarity.
+select
+player_id,
+event_date,
+sum(games_played )over (partition by player_id order by event_date)  games_played_so_far #window function here to calculate the sum  of games_played on each row
+#rank()over(partition by player_id order by event_date desc) as rnk
+from activity
+group by 1,2
+order by 1, 2 
