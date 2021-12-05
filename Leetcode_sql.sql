@@ -653,3 +653,44 @@ sum(games_played )over (partition by player_id order by event_date)  games_playe
 from activity
 group by 1,2
 order by 1, 2 
+
+
+#550. Game Play Analysis IV
+#Write an SQL query to report the fraction of players that logged in again on the day after the day they first logged in, rounded to 2 decimal places. In other words, you need to count the number of players that logged in for at least two consecutive days starting from their first login date, then divide that number by the total number of players.
+with cte as 
+(select 
+player_id, 
+datediff(lead(event_date, 1) over(partition by player_id order by event_date) , event_date) as next_login, #next one - the exist one
+rank() over(partition by player_id order by event_date) as rr #find the smallest event_date (the earliest date)
+from activity)
+
+select round(count(distinct cte.player_id)/count(distinct s.player_id),2) as fraction 
+from cte 
+right join activity s 
+on cte.player_id = s.player_id and cte.rr =1 and cte.next_login = 1; #for the same id, match the date, find the next date and first event date 
+#################alternative
+# datediff(date1, date2) is date1 - date2
+with total_players as
+(
+select count(distinct player_id) as total_count from activity
+),
+next_day_players as (
+select count(distinct a1.player_id) as next_day_count
+from (select player_id, min(event_date) as event_date from activity group by player_id) a1
+join activity a2 on a1.player_id=a2.player_id and a2.event_date=DATE_ADD(a1.event_date, INTERVAL 1 DAY)
+)
+select round(next_day_count/total_count,2) as fraction from total_players join next_day_players;
+############alternative
+with cte as(
+    select *,
+    min(event_date) over(partition by player_id) as first_day,
+    date_add(min(event_date) over(partition by player_id), interval 1 day) as next_day
+from Activity),
+cons_user as(
+    select count(distinct player_id) as cons
+    from cte 
+    where event_date = next_day
+)
+
+select round(cons / count(distinct player_id),2) as fraction
+from cons_user, cte
