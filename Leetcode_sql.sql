@@ -694,3 +694,37 @@ cons_user as(
 
 select round(cons / count(distinct player_id),2) as fraction
 from cons_user, cte
+
+
+
+
+#613. Shortest Distance in a Line
+#Write an SQL query to report the shortest distance between any two points from the Point table.
+select 
+distance as shortest
+from (
+select
+p1.x x1,
+p2.x x2,
+min(abs(p1.x -p2.x)) as distance,
+rank()over (order by min(p1.x - p2.x)) as rnk
+from point p1, point p2
+    where p1.x != p2.x
+) data
+where rnk =1
+
+
+#614. Second Degree Follower
+#A second-degree follower is a user who:
+
+#--follows at least one user, and
+#--is followed by at least one user.
+#Write an SQL query to report the second-degree users and the number of their followers.
+#Return the result table ordered by follower in alphabetical order.
+
+select followee as follower, 
+count(distinct follower) as num
+from follow
+where followee in (select follower from follow)
+group by 1
+order by follower;
