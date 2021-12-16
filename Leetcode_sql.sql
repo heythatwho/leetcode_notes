@@ -728,3 +728,39 @@ from follow
 where followee in (select follower from follow)
 group by 1
 order by follower;
+
+
+#619. Biggest Single Number
+#A single number is a number that appeared only once in the MyNumbers table.
+
+#Write an SQL query to report the largest single number. If there is no single number, report null.
+select max(num) as num
+from (select num
+      from mynumbers
+      group by 1 #dont forget group here
+     having count(num) = 1) data;
+
+
+
+
+###
+
+
+select department_salary.pay_month, department_id,
+case
+  when department_avg>company_avg then 'higher'
+  when department_avg<company_avg then 'lower'
+  else 'same'
+end as comparison
+from
+(
+  select department_id, avg(amount) as department_avg, date_format(pay_date, '%Y-%m') as pay_month
+  from salary join employee on salary.employee_id = employee.employee_id
+  group by department_id, pay_month
+) as department_salary
+join
+(
+  select avg(amount) as company_avg,  date_format(pay_date, '%Y-%m') as pay_month from salary group by date_format(pay_date, '%Y-%m')
+) as company_salary
+on department_salary.pay_month = company_salary.pay_month
+;
