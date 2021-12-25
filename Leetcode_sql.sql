@@ -743,7 +743,7 @@ from (select num
 
 
 
-###
+#################################################################
 
 
 select department_salary.pay_month, department_id,
@@ -764,3 +764,23 @@ join
 ) as company_salary
 on department_salary.pay_month = company_salary.pay_month
 ;
+########################################################################
+
+
+#1050. Actors and Directors Who Cooperated At Least Three Times
+#Write a SQL query for a report that provides the pairs (actor_id, director_id) where the actor has cooperated with the director at least three times.
+#take advantage on timestamp
+SELECT actor_id, director_id
+FROM ActorDirector
+GROUP BY actor_id, director_id
+having count(timestamp) >=3;
+######################################################
+#concat and groupby
+select
+actor_id,
+director_id
+from actordirector
+group by 1,2
+having count(concat(actor_id, director_id)) >=3;
+
+
