@@ -784,3 +784,36 @@ group by 1,2
 having count(concat(actor_id, director_id)) >=3;
 
 
+#1479. Sales by Day of the Week
+#You are the business owner and would like to obtain a sales report for category items and the day of the week.
+#Write an SQL query to report how many units in each category have been ordered on each day of the week.
+#Return the result table ordered by category.
+select t1.item_category as Category
+        ,sum(case when dayname(order_date) = 'Monday' then quantity else 0 end) as Monday
+        ,sum(case when dayname(order_date) = 'Tuesday' then quantity else 0 end) as Tuesday
+        ,sum(case when dayname(order_date) = 'Wednesday' then quantity else 0 end) as Wednesday
+        ,sum(case when dayname(order_date) = 'Thursday' then quantity else 0 end) as Thursday
+        ,sum(case when dayname(order_date) = 'Friday' then quantity else 0 end) as Friday
+        ,sum(case when dayname(order_date) = 'Saturday' then quantity else 0 end) as Saturday
+        ,sum(case when dayname(order_date) = 'Sunday' then quantity else 0 end) as Sunday
+
+from Items t1
+left join Orders t2 using(item_id)
+group by 1
+order by category
+############################################################
+select 
+item_category as Category,
+sum(case when weekday(order_date) =0 then quantity else 0 end) as "Monday",
+sum(case when weekday(order_date) =1 then quantity else 0 end) as "Tuesday",
+sum(case when weekday(order_date) =2 then quantity else 0 end) as "Wednesday",
+sum(case when weekday(order_date) =3 then quantity else 0 end) as "Thursday",
+sum(case when weekday(order_date) =4 then quantity else 0 end) as "Friday",
+sum(case when weekday(order_date) =5 then quantity else 0 end) as "Saturday",
+sum(case when weekday(order_date) =6 then quantity else 0 end) as "Sunday"
+
+from Items as i  
+left join Orders as o
+on i.item_id =o.item_id
+group by item_category 
+order by  item_category;
