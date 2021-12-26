@@ -817,3 +817,37 @@ left join Orders as o
 on i.item_id =o.item_id
 group by item_category 
 order by  item_category;
+
+
+#1596. The Most Frequently Ordered Products for Each Customer
+#Write an SQL query to find the most frequently ordered product(s) for each customer.
+#The result table should have the product_id and product_name for each customer_id who ordered at least one order. Return the result table in any order.
+select
+customer_id 
+,product_id 
+,product_name
+from
+(select
+c.customer_id 
+,o.product_id 
+,product_name 
+,dense_rank()over(partition by customer_id order by count(order_id) desc) as rank_no
+from products as p
+ join orders as o
+on p.product_id = o.product_id
+ join customers as c
+on c.customer_id = o.customer_id
+group by 1,2
+) data
+where rank_no =1
+######################################easier way,ignore the customers table
+with rnk as (
+    SELECT *, rank() over (partition by customer_id order by count(product_id) desc) as rk 
+    from orders
+    group by customer_id, product_id)
+
+SELECT rnk.customer_id, rnk.product_id, product_name from rnk
+left join products p
+on rnk.product_id = p.product_id 
+where rk = 1
+
