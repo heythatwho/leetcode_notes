@@ -744,26 +744,35 @@ from (select num
 
 
 #################################################################
-
-
-select department_salary.pay_month, department_id,
-case
-  when department_avg>company_avg then 'higher'
-  when department_avg<company_avg then 'lower'
-  else 'same'
+#615. Average Salary: Departments VS Company
+#Write an SQL query to report the comparison result (higher/lower/same) of the average salary of employees in a department to the company's average salary by month
+#company avg salary by month
+with avg_all as(
+    select left(pay_date,7) as pay_month,
+    avg(amount) as avg_all
+    from salary
+    group by 1
+),
+#avg department salary by month
+avg_dep as(
+    select left(pay_date,7) as pay_month,
+    department_id,
+    avg(amount) avg_dep
+    from salary s join employee e
+    on s.employee_id=e.employee_id
+    group by 1,2
+)
+#compare
+select 
+d.pay_month,
+department_id,
+case 
+when avg_dep = avg_all then "same"
+when avg_dep > avg_all then "higher"
+else "lower" 
 end as comparison
-from
-(
-  select department_id, avg(amount) as department_avg, date_format(pay_date, '%Y-%m') as pay_month
-  from salary join employee on salary.employee_id = employee.employee_id
-  group by department_id, pay_month
-) as department_salary
-join
-(
-  select avg(amount) as company_avg,  date_format(pay_date, '%Y-%m') as pay_month from salary group by date_format(pay_date, '%Y-%m')
-) as company_salary
-on department_salary.pay_month = company_salary.pay_month
-;
+from avg_dep d, avg_all a
+where d.pay_month = a.pay_month;
 ########################################################################
 
 
