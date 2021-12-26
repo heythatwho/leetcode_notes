@@ -851,3 +851,28 @@ left join products p
 on rnk.product_id = p.product_id 
 where rk = 1
 
+
+#1270. All People Report to the Given Manager
+#Write an SQL query to find employee_id of all employees that directly or indirectly report their work to the head of the company.The indirect relation between managers will not exceed three managers as the company is small.
+# Write your MySQL query statement below
+select distinct employee_id from Employees where manager_id in
+(select distinct employee_id from Employees where manager_id IN
+(select distinct employee_id from Employees where manager_id =1 ) )
+and employee_id !=1
+####alternative way with temp table
+WITH cte AS (
+    SELECT e1.employee_id, 
+    e1.manager_id AS m1, 
+    e2.manager_id AS m2, 
+    e3.manager_id AS m3
+    FROM employees e1 
+    LEFT JOIN employees e2 
+    ON e1.manager_id = e2.employee_id
+    LEFT JOIN employees e3 
+    ON e2.manager_id = e3.employee_id
+)
+
+SELECT employee_id FROM cte 
+WHERE m3 = 1 
+AND employee_id != 1;
+
