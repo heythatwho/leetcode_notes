@@ -956,3 +956,54 @@ left outer join early_data d
 on p.product_id =d.product_id
 where rnk = 1 or rnk is null #need to pay extra attention to rnk is null, it will filter out product_id =3
 #group by 1
+
+
+
+#1811. Find Interview Candidates
+#Write an SQL query to report the name and the mail of all interview candidates. A user is an interview candidate if at least one of these two conditions is true:
+
+#The user won any medal in three or more consecutive contests.
+#The user won the gold medal in three or more different contests (not necessarily consecutive).
+
+#The user won the gold medal in three or more different contests
+with gold as(
+select #contest_id,
+gold_medal as user_id
+from Contests c
+group by 1
+having count(*)>= 3
+),
+# The user won any medal in three or more consecutive contests.
+all_others as (
+select contest_id, gold_medal as user_id
+from Contests c1
+union all
+select contest_id, silver_medal as user_id
+from Contests c2
+union all
+select contest_id, bronze_medal as user_id
+from Contests c3
+),
+
+other_sort as(
+select
+user_id, contest_id,
+lead(contest_id, 1) over(partition by user_id order by contest_id) as p1,
+lead(contest_id, 2) over(partition by user_id order by contest_id) as p2
+from all_others
+),
+
+int_ids as(
+select 
+user_id from gold
+union
+select 
+user_id
+from other_sort
+where p2 = p1 + 1 and p1=contest_id + 1
+)
+
+select name, mail
+from users u
+inner join int_ids i
+on u.user_id = i.user_id
