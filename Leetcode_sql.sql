@@ -885,3 +885,54 @@ SELECT employee_id FROM cte
 WHERE m3 = 1 
 AND employee_id != 1;
 
+
+#262. Trips and Users
+#Write a SQL query to find the cancellation rate of requests with unbanned users (both client and driver must not be banned) each day between "2013-10-01" and "2013-10-03". Round Cancellation Rate to two decimal points.
+# #of of cancellation by day 
+# #of of cancellation by day 
+with cancel_no as (
+    select request_at as day,
+    count(id) as cancel_no #my solution does not have 10-02
+    from trips t 
+     join  users u
+    on u.users_id = t.client_id 
+    join users u2    
+    on u2.users_id=t.driver_id
+    where u.banned = "No" and u2.banned = "No" and status like "cancelled%" 
+    group by 1
+),
+# total # rides
+total_no as (
+    select  request_at as day,
+     count(id) as total_no
+    from trips t 
+     join  users u
+    on u.users_id = t.client_id 
+     join users u2    
+    on u2.users_id=t.driver_id
+    where u.banned = "No" and u2.banned ="No" and request_at between '2013-10-01' and '2013-10-03'
+    group by 1
+)
+
+select t.Day,
+round(ifnull(cancel_no/total_no, 0), 2) as "cancellation rate"
+from cancel_no c 
+right join total_no t
+on c.day = t.day;
+####################alternative way assign value 0 to cancellation temp table in regards to 10-02
+with cancels as 
+(
+select request_at as Day, sum(case when status='completed' then 0 else 1 end) as count_stats from Trips t inner join Users u on t.client_id = u.users_id
+    inner join Users d on t.driver_id = d.users_id
+where u.banned = 'No'
+    and d.banned = 'No'
+and request_at between '2013-10-01' and '2013-10-03' group by request_at
+    ),
+    total_req as 
+(select request_at as Day , count(*) as total from Trips t inner join Users u on t.client_id = u.users_id
+    inner join Users d on t.driver_id = d.users_id
+where u.banned = 'No'
+    and d.banned = 'No'
+and request_at between '2013-10-01' and '2013-10-03' group by request_at)
+select t.Day, round((count_stats/total),2) as "Cancellation Rate" from cancels c 
+left outer join total_req t on c.Day = t.Day;
