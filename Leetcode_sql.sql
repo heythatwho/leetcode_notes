@@ -936,3 +936,23 @@ where u.banned = 'No'
 and request_at between '2013-10-01' and '2013-10-03' group by request_at)
 select t.Day, round((count_stats/total),2) as "Cancellation Rate" from cancels c 
 left outer join total_req t on c.Day = t.Day;
+
+
+
+#1164. Product Price at a Given Date
+#Write an SQL query to find the prices of all products on 2019-08-16. Assume the price of all products before any change is 10.
+# create sale data as of 08-16
+with early_data as (
+    select product_id, new_price, change_date, 
+    row_number() over(partition by product_id order by change_date desc) as rnk
+    from Products
+    where change_date <= "2019-08-16" 
+)
+select distinct
+p.product_id,
+ifnull(d.new_price, 10) as price
+from products p
+left outer join early_data d
+on p.product_id =d.product_id
+where rnk = 1 or rnk is null #need to pay extra attention to rnk is null, it will filter out product_id =3
+#group by 1
