@@ -1185,3 +1185,22 @@ from
 left join submissions as comments
 on post.post_id=comments.parent_id
  group by 1 order by 1
+
+
+
+
+
+#1142. User Activity for the Past 30 Days II
+Write an SQL query to find the average number of sessions per user for a period of 30 days ending 2019-07-27 inclusively, rounded to 2 decimal places. The sessions we want to count for a user are those with at least one activity in that time period.
+# Write your MySQL query statement below
+
+select
+case when session_per_user is not null and session_per_user <>0 then round(sum(session_per_user)/count(session_per_user),2 )
+else 0 end as average_sessions_per_user #ensure not null and not zero 
+from 
+(select distinct
+user_id,
+count(distinct session_id) session_per_user
+from activity
+where datediff('2019-07-27',activity_date) <30 and activity_date<'2019-07-27'
+group by 1) a
