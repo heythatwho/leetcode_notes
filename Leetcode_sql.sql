@@ -1109,3 +1109,18 @@ left join users u
 on r.user_id=u.user_id
 group by contest_id 
 order by 2 desc, 1
+
+
+
+#1211. Queries Quality and Percentage
+Write an SQL query to find each query_name, the quality and poor_query_percentage.
+
+Both quality and poor_query_percentage should be rounded to 2 decimal places.
+# Write your MySQL query statement below
+
+select 
+query_name,
+round(avg(rating/position),2) as quality,
+round(count(case when rating<3 then rating end)/count(rating)*100,2) as poor_query_percentage #the key in the condition
+from Queries 
+group by query_name
