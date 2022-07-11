@@ -1124,3 +1124,43 @@ round(avg(rating/position),2) as quality,
 round(count(case when rating<3 then rating end)/count(rating)*100,2) as poor_query_percentage #the key in the condition
 from Queries 
 group by query_name
+
+
+#1179. Reformat Department Table
+Write an SQL query to reformat the table such that there is a department id column and a revenue column for each month.
+# Write your MySQL query statement below
+select distinct
+id,
+sum(case when month ='Jan' then revenue end) as Jan_Revenue ,
+sum(case when month ='Feb' then revenue end) as Feb_Revenue ,
+sum(case when month ='Mar' then revenue end) as Mar_Revenue ,
+sum(case when month ='Apr' then revenue end) as Apr_Revenue ,
+sum(case when month ='May' then revenue end) as May_Revenue ,
+sum(case when month ='Jun' then revenue end) as Jun_Revenue ,
+sum(case when month ='Jul' then revenue end) as Jul_Revenue ,
+sum(case when month ='Aug' then revenue end) as Aug_Revenue ,
+sum(case when month ='Sep' then revenue end) as Sep_Revenue ,
+sum(case when month ='Oct' then revenue end) as Oct_Revenue ,
+sum(case when month ='Nov' then revenue end) as Nov_Revenue ,
+sum(case when month ='Dec' then revenue end) as Dec_Revenue 
+from Department 
+group by id
+order by id
+
+
+##1731. The Number of Employees Which Report to Each Employee
+For this problem, we will consider a manager an employee who has at least 1 other employee reporting to them.
+
+Write an SQL query to report the ids and the names of all managers, the number of employees who report directly to them, and the average age of the reports rounded to the nearest integer.
+
+Return the result table ordered by employee_id.
+# Write your MySQL query statement below
+select
+e1.reports_to as employee_id ,
+e2.name,
+count(e1.employee_id ) as reports_count,
+round(avg(e1.age)) average_age 
+from Employees e1, Employees e2
+where e1.reports_to is not null and e1.reports_to=e2.employee_id  #key in matching eID to rID
+group by 1, 2
+order by 1
