@@ -1077,4 +1077,20 @@ where author_id=viewer_id #this is the key
 order by v1.author_id ;
 
 
-
+##1141. User Activity for the Past 30 Days I
+Write an SQL query to find the daily active user count for a period of 30 days ending 2019-07-27 inclusively. A user was active on someday if they made at least one activity on that day.
+# Write your MySQL query statement below
+select
+activity_date day,
+count(distinct user_id ) active_users 
+from Activity
+where datediff('2019-07-27', activity_date )<30 and activity_date <'2019-07-27'   #the key point in the past 30 days expression
+group by 1
+#alternative 
+select
+activity_date day,
+count(distinct user_id ) active_users 
+from Activity
+#where datediff('2019-07-27', activity_date )<30 and activity_date <'2019-07-27'
+where activity_date between date_sub('2019-07-27',interval 29 DAY) and '2019-07-27' #ps: learn how to express the past # of days
+group by 1
