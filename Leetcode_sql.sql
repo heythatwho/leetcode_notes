@@ -1164,3 +1164,24 @@ from Employees e1, Employees e2
 where e1.reports_to is not null and e1.reports_to=e2.employee_id  #key in matching eID to rID
 group by 1, 2
 order by 1
+
+
+
+#1241. Number of Comments per Post
+The Submissions table may contain duplicate comments. You should count the number of unique comments per post.
+
+The Submissions table may contain duplicate posts. You should treat them as one post.
+
+The result table should be ordered by post_id in ascending order.
+# Write your MySQL query statement below
+select post_id,
+count(distinct sub_id) as number_of_comments #distinguish comment and post
+from 
+    (select distinct
+    sub_id as post_id
+    from submissions
+    where parent_id is null #post
+    ) as post
+left join submissions as comments
+on post.post_id=comments.parent_id
+ group by 1 order by 1
