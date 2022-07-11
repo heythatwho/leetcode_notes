@@ -1204,3 +1204,20 @@ count(distinct session_id) session_per_user
 from activity
 where datediff('2019-07-27',activity_date) <30 and activity_date<'2019-07-27'
 group by 1) a
+
+
+
+
+#1173. Immediate Food Delivery I
+If the customers preferred delivery date is the same as the order date, then the order is called immediate; otherwise, it is called scheduled.
+
+Write an SQL query to find the percentage of immediate orders in the table, rounded to 2 decimal places.
+# Write your MySQL query statement below
+select
+round( (select
+    count(delivery_id)  as immediate_count
+    from Delivery
+    where order_date=customer_pref_delivery_date)/count(a.delivery_id )*100,2) as immediate_percentage #using subquery is calculation is faster
+from Delivery a
+inner join Delivery b
+on a.delivery_id = b.delivery_id 
