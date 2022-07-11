@@ -1054,10 +1054,27 @@ a.customer_id,
 count(a.visit_id) count_no_trans
 from 
 (
-select 
+select   ######find these customer_id first and count the number of visits
 customer_id, 
 visit_id
 from Visits V
 where visit_id not in (select visit_id from Transactions)
 ) a
-group by customer_id
+group by customer_id;
+
+
+
+#1148. Article Views I
+Write an SQL query to find all the authors that viewed at least one of their own articles.
+
+Return the result table sorted by id in ascending order.
+
+# Write your MySQL query statement below
+select distinct #avoid show duplicate for these viewed more than one time
+v1.author_id as id 
+from Views v1
+where author_id=viewer_id #this is the key
+order by v1.author_id ;
+
+
+
