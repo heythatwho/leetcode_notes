@@ -1007,3 +1007,57 @@ select name, mail
 from users u
 inner join int_ids i
 on u.user_id = i.user_id
+
+
+
+##1084. Sales Analysis III
+####Write an SQL query that reports the products that were only sold in the first quarter of 2019. That is, between 2019-01-01 and 2019-03-31 inclusive.
+# Write your MySQL query statement below
+with other_time as (select distinct product_id, sale_date
+                    from Sales 
+                    where sale_date not between '2019-01-01' and '2019-03-31')
+##find the sales not the time period
+
+select distinct
+s.product_id,
+product_name
+from Sales s
+left join  Product p
+on p.product_id=s.product_id
+where s.product_id not in (select product_id from other_time) ##ensure the product not in the outside period sales
+and s.sale_date between '2019-01-01' and '2019-03-31' 
+
+##########using subquery is faster 
+# Write your MySQL query statement below
+
+
+select distinct
+s.product_id,
+product_name
+from Sales s
+left join  Product p
+on p.product_id=s.product_id
+where s.product_id not in (select distinct product_id
+                    from Sales 
+                    where sale_date not between '2019-01-01' and '2019-03-31')
+
+
+
+
+
+#####1581. Customer Who Visited but Did Not Make Any Transactions
+#Write an SQL query to find the IDs of the users who visited without making any transactions and the number of times they made these types of visits.
+# Write your MySQL query statement below
+
+select 
+a.customer_id,
+count(a.visit_id) count_no_trans
+from 
+(
+select 
+customer_id, 
+visit_id
+from Visits V
+where visit_id not in (select visit_id from Transactions)
+) a
+group by customer_id
