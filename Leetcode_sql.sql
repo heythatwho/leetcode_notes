@@ -1094,3 +1094,18 @@ from Activity
 #where datediff('2019-07-27', activity_date )<30 and activity_date <'2019-07-27'
 where activity_date between date_sub('2019-07-27',interval 29 DAY) and '2019-07-27' #ps: learn how to express the past # of days
 group by 1
+
+
+1633. Percentage of Users Attended a Contest
+# Write your MySQL query statement below
+Write an SQL query to find the percentage of the users registered in each contest rounded to two decimals.
+
+Return the result table ordered by percentage in descending order. In case of a tie, order it by contest_id in ascending order.
+select
+contest_id,
+round(count(r.user_id )/(select count(user_id) all_users from Users)*100, 2) as percentage #key point is putting subquery here for calculation
+from Register r
+left join users u
+on r.user_id=u.user_id
+group by contest_id 
+order by 2 desc, 1
