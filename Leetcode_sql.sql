@@ -1247,3 +1247,87 @@ inner join (select country_id, avg(Weather_state) average_weather
            group by country_id
           ) w
 on c.country_id=w.country_id
+
+
+
+
+#1322. Ads Performance
+A company is running Ads and wants to calculate the performance of each Ad.
+
+Performance of the Ad is measured using Click-Through Rate (CTR) where:
+
+
+Write an SQL query to find the ctr of each Ad. Round ctr to two decimal points.
+
+Return the result table ordered by ctr in descending order and by ad_id in ascending order in case of a tie.
+
+The query result format is in the following example.
+
+# Write your MySQL query statement below
+select distinct
+ads.ad_id,
+case when ad_total_clicked + ad_total_viewed = 0 then 0
+else round(ad_total_clicked/(ad_total_clicked + ad_total_viewed)*100,2) end as ctr   
+from  Ads
+inner join (
+            select
+            ad_id,
+            count(case when action ='Clicked' then 1 end) ad_total_clicked,
+            count(case when action ='Viewed' then 1 end) ad_total_viewed
+            from ads
+            group by 1
+            ) cnt
+on ads.ad_id= cnt.ad_id
+order by 2 desc, 1
+
+
+
+
+#1327. List the Products Ordered in a Period
+Write an SQL query to get the names of products that have at least 100 units ordered in February 2020 and their amount.
+# Write your MySQL query statement below
+select 
+product_name,
+total as unit
+from products a
+inner join (select
+            product_id,
+            sum(unit) as total
+            from orders 
+            where DATE_FORMAT(order_date,'%Y-%m') = '2020-02'
+            group by product_id
+           ) b
+on a.product_id=b.product_id                       #time period expression
+where total >=100
+
+#alternative 
+# Write your MySQL query statement below
+select 
+product_name,
+total as unit
+from products a
+inner join (select
+            product_id,
+            sum(unit) as total
+            from orders 
+            where year(order_date) = 2020 and month(order_date) =02
+            group by product_id
+           ) b
+on a.product_id=b.product_id
+where total >=100
+
+#alternative
+# Write your MySQL query statement below
+select 
+product_name,
+total as unit
+from products a
+inner join (select
+            product_id,
+            sum(unit) as total
+            from orders 
+            where left(order_date,7) = '2020-02'
+            group by product_id
+           ) b
+on a.product_id=b.product_id
+where total >=100
