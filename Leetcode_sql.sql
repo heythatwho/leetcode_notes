@@ -1331,3 +1331,38 @@ inner join (select
            ) b
 on a.product_id=b.product_id
 where total >=100
+
+
+
+##1435. Create a Session Bar Chart
+You want to know how long a user visits your application. You decided to create bins of "[0-5>", "[5-10>", "[10-15>", and "15 minutes or more" and count the number of sessions on it.
+
+Write an SQL query to report the (bin, total).
+# Write your MySQL query statement below
+
+select 
+'[0-5>' as bin,
+count(session_id) as total     #in this case, case when doesnt work it will not show values do not exist like [10-15>, need to use union, but be care of using group by, it will remove null
+from sessions
+where duration/60 >=0 and duration/60<5
+
+union
+select 
+'[5-10>' as bin,
+count(session_id) as total
+from sessions
+where duration/60 >= 5 and duration/60<10
+
+union
+select 
+'[10-15>' ,
+count(*) as total
+from sessions
+where duration/60 >= 10 and duration/60 <15
+
+union
+select 
+'15 or more',
+count(session_id) as total
+from sessions
+where duration/60 >= 15
