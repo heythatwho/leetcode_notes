@@ -1366,3 +1366,70 @@ select
 count(session_id) as total
 from sessions
 where duration/60 >= 15
+
+
+
+1511. Customer Order Frequency
+Write an SQL query to report the customer_id and customer_name of customers who have spent at least $100 in each month of June and July 2020.
+# Write your MySQL query statement below
+with June as (
+select     
+c.customer_id,
+name,
+sum(price *quantity) as june
+from customers c
+ join orders o
+on c.customer_id=o.customer_id
+ join product p
+on p.product_id=o.product_id
+where date_format(order_date,'%Y-%m') ='2020-06'
+group by 1, 2),
+
+July as (
+select     
+c.customer_id,
+name,
+sum(price *quantity) as july
+from customers c
+ join orders o
+on c.customer_id=o.customer_id
+ join product p
+on p.product_id=o.product_id
+where date_format(order_date,'%Y-%m') ='2020-07'
+group by 1, 2)
+
+select june.customer_id, june.name
+from june inner join july
+on june.customer_id=july.customer_id
+where june >=100 and july>=100
+
+#alternative
+select customer_id, name
+from (select     
+        c.customer_id,
+        name,
+        sum(case when date_format(order_date,'%Y-%m') ='2020-06' then price *quantity else 0 end) as June,
+        sum(case when date_format(order_date,'%Y-%m') ='2020-07' then price *quantity else 0 end) as July     #put sum() outside the case statement
+        from customers c
+        left join orders o
+        on c.customer_id=o.customer_id
+        left join product p
+        on p.product_id=o.product_id
+        group by 1, 2) flats
+where June >=100 and July>=100
+
+
+#1484. Group Sold Products By The Date
+Write an SQL query to find for each date the number of different products sold and their names.
+
+The sold products names for each date should be sorted lexicographically.
+
+Return the result table ordered by sell_date.
+# Write your MySQL query statement below
+select 
+sell_date,
+count(distinct product) as num_sold ,
+group_concat(distinct product) as products    #use of group_concat() , be ware of using distinct here.
+from Activities 
+group by 1
+order by 1
